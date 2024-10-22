@@ -1,0 +1,123 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Ensure content is spaced */
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+}
+
+.container {
+    flex: 1; /* Allow the container to take available space */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
+}
+
+.class-card {
+    display: flex;
+    justify-content: space-between;
+    width: 60%;
+    margin-bottom: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.class-image {
+    width: 40%;
+    max-width: 100%; 
+    height: auto;  
+    background-color: #e0f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.letter {
+    font-size: 5rem;
+    color: black;
+    position: absolute;
+}
+
+.class-info {
+    padding: 20px;
+    width: 60%;
+}
+
+.class-info h2 {
+    color: #1a73e8;
+    margin-bottom: 10px;
+}
+
+.class-info p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #007bff; 
+    color: white; 
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: block; 
+    margin: 10px auto; 
+}
+
+button:hover {
+    background-color: #0056b3; 
+    text-decoration: none;
+}
+
+/* Remove underline from links */
+a {
+    text-decoration: none;
+    color: inherit; /* Ensures the link inherits the button's color */
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+/* Footer Styles */
+footer {
+    background-color: #00416d;
+    color: white;
+    padding: 10px 0;
+    text-align: center;
+    width: 100%;
+    /* No need for position: relative or bottom */
+}
+
+footer p {
+    margin: 5px 0;
+}
+
+.footer-list {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.footer-list li {
+    margin: 0 15px;
+}
+
+.footer-list a {
+    color: white;
+    text-decoration: none;
+}
