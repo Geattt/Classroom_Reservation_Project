@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="profile-settting-decor.css">
+</head>
+<body>
+    <div class="top-box">
+      <a href="../main-menu.html" onclick="return confirm('Are you sure you want to go back?\nMake sure all data have been saved');"><ion-icon name="arrow-back-circle-outline" class="back-icon"></ion-icon></a>
+        <ion-icon name="apps-outline" class="apps-outline"  title="More Menu"></ion-icon>
+        <div class="hidden-navbar">
+          <ul><a href="#"><ion-icon name="notifications-circle-outline" class="bell"></ion-icon>Notification</a></ul>
+          <ul class="lang-nav"  id="language-selectID"><a href="#"><ion-icon name="globe-outline" class="globe"></ion-icon>Language</a>
+            <span class="language-select">
+              <li class="english"><a href="#">English(US)</a></li>
+              <li><a href="#">中文(繁體)</a></li>
+            </span>
+          </ul>
+          <ul><a href="#"><ion-icon name="help-circle-outline" class="faq"></ion-icon>FAQ</a></ul>
+          <ul><a href="#"><ion-icon name="exit-outline" class="exit"></ion-icon>Log Out</a></ul>
+      </div>
+      </div>
+      <div class="data-info-box">
+        <div class="data-info-text">
+          <div class="title">
+            <ion-icon name="person-circle-outline" class="person-circle-outline"></ion-icon><h2>Personal Data Information</h2>
+          </div>
+          <h3>Profile ID:</h3>
+          <h3>Phone Contact:</h3>
+          <h3>Personal Email:</h3> 
+          <h3>Account Status:</h3>
+        </div>
+      </div>
+      <div class="btn-below">
+        <button>Save</button>
+        <button class="back-button">Clear All</button>
+      </div>
+      <footer>
+        <p>&copy; 2024 National Taiwan Ocean University. All Rights Reserved.</p>
+        <ul class="footer-list">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Contact Us</a></li>
+        </ul>
+    </footer>
+</body>
+<script>
+    const appsOutline = document.querySelector('.apps-outline');
+    const hiddenNavbar = document.querySelector('.hidden-navbar');
+    appsOutline.addEventListener('click', () => {
+        if (hiddenNavbar.classList.contains('active')) {
+            hiddenNavbar.classList.remove('active');
+            hiddenNavbar.classList.add('inactive');
+            setTimeout(() => {
+                hiddenNavbar.classList.remove('inactive');
+            }, 300);
+        } else {
+            hiddenNavbar.classList.add('active');
+            hiddenNavbar.classList.remove('inactive');
+        }
+    });
+  </script>
+</html>

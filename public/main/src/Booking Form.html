@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Form</title>
+    <link rel="stylesheet" href="Booking Form.css">
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-header">
+            <h1>Booking Form</h1>
+        </div>
+        <div class="form-content">
+            <div class="class-image">
+                <img src="../img/class/cutie.jpg" alt="Class Image" width="370" height="200">
+            </div>
+            <form>
+                
+                <div class="form-group">
+                    <label for="class-name">Class name:</label>
+                    <input type="text" id="class-name" name="class-name" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="date">Booking Date:</label>
+                    <input type="date" id="date" name="date" required>
+                </div>
+                <div class="form-group">
+                    <label for="time">Booking Time:</label>
+                    <div id="time-buttons">
+                        <div class="button-collumn">
+                            
+                            <button type="button" class="time-button" onclick="selectTime('10:20', this)">10:20 - 11.15</button>
+                        
+                            <button type="button" class="time-button" onclick="selectTime('11:15', this)">11:15 - 12.05</button>
+                            <button type="button" class="time-button" onclick="selectTime('13:10', this)">13:10 - 14.10</button>
+                            <button type="button" class="time-button" onclick="selectTime('14:10', this)">14:10 - 15.10</button>
+                        
+                            <button type="button" class="time-button" onclick="selectTime('15:10', this)">15:10 - 16.05</button>
+                            <button type="button" class="time-button" onclick="selectTime('16:05', this)">16:05 - 17.30</button>
+                            <button type="button" class="time-button" onclick="selectTime('17:30', this)">17:30 - 18.20</button>
+                            <button type="button" class="time-button" onclick="selectTime('17:30', this)">Book Now</button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="selected-time" name="time" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="student-id">Student ID:</label>
+                    <input type="text" id="student-id" name="student-id" required>
+                </div>
+                <div class="form-group">
+                    <label for="photo-upload" class="upload-btn">Upload Student Card:</label>
+                    <input type="file" id="photo-upload" accept="image/*" required>
+                </div>
+                <div class="form-group">
+                    <label for="department">Department:</label>
+                    <input type="text" id="department" name="department" placeholder="Ex. Computer Science and Information Engineering" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone-number">Phone Number:</label>
+                    <input type="text" id="phone-number" name="phone-number" required>
+                </div>
+                <div class="form-group">
+                    <label for="purpose">Using Purpose:</label>
+                    <input type="text" id="purpose" name="purpose" placeholder="Ex. Meeting, gathering, etc" required>
+                </div>
+                <div class="form-group">
+                    <label for="total-students">Number of Students:</label>
+                    <input type="number" id="total-students" name="total-students" required>
+                </div>
+
+                
+                <div class="form-group">
+                    <button type="submit" class="submit-button">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="Booking Form.js"></script>
+</body>
+
+<!-- Footer Section -->
+<footer>
+    <p>&copy; 2024 National Taiwan Ocean University. All Rights Reserved.</p>
+    <ul class="footer-list">
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Contact Us</a></li>
+    </ul>
+</footer>
+</html>
+
+
