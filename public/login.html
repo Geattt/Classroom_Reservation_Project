@@ -140,6 +140,7 @@
                
                // Save user_type in localStorage or sessionStorage for future use
                localStorage.setItem('user_type', data.user_type);
+               localStorage.setItem('userId', data.user_id);
 
                // Redirect based on user_type
                if (data.user_type === 'admin') {

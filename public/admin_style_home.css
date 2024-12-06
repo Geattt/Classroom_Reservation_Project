@@ -181,6 +181,27 @@ tr:hover {
   
     h2, p { margin-top: 1em }
   }
+  label {
+    display: block;
+    margin-top: 10px;
+    color: white;
+  }
+  input, select, button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  button:hover {
+    background-color: #0056b3;
+  }
   
   @media(max-width: 800px){
     body{

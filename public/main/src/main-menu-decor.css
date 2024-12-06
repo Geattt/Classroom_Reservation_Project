@@ -86,7 +86,7 @@ body{
     height: 40%;
   }
   .mid-logo img{
-    width: 250px;
+    width: 450px;
   }
 
   .selection{
@@ -118,6 +118,11 @@ body{
   }
 
   .reserve a{
+    text-decoration: none;
+    color: #F1F3F5;
+  }
+
+  .record a{
     text-decoration: none;
     color: #F1F3F5;
   }

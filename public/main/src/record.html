@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NTOU-CLASS-SYSTEM</title>
+    <link rel="stylesheet" href="main-menu-decor.css">
+    <style>
+        /* Table container styling */
+        .container-table100 {
+          width: 100%;
+          margin: 30px 0;
+          overflow-x: auto;
+        }
+      
+        /* Table styling */
+        table {
+          border-collapse: collapse;
+          width: 90%;
+          margin: 0 auto;
+          background-color: #ffffff;
+          box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+          text-align: left;
+        }
+      
+        thead {
+          background-color: #00416d;
+          color: white;
+        }
+      
+        th, td {
+          padding: 12px 15px;
+          border: 1px solid #ddd;
+        }
+      
+        th {
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          font-size: 14px;
+        }
+      
+        tbody tr:nth-child(odd) {
+          background-color: #f9f9f9;
+        }
+      
+        tbody tr:nth-child(even) {
+          background-color: #fefefe;
+        }
+      
+        tbody tr:hover {
+          background-color: #f1f3f5;
+          cursor: pointer;
+        }
+      
+        tbody td {
+          font-size: 14px;
+          color: #333;
+        }
+      
+        /* Column alignment for specific needs */
+        .column1, .column2, .column3 {
+          text-align: center;
+        }
+      
+        .column4, .column5, .column6, .column7 {
+          text-align: left;
+        }
+      </style>
+      
+</head>
+<body>
+  <img class="bg-img" src="../img/bg.jpg">
+    <div class="navbar">
+      <div class="logo">
+        <img src="../img/OceanSpace.png" alt="">
+      </div>
+      <div class="profile">
+        <img src="../img/user-icon.png">
+        <h3>Welcome Antonio</h3>
+      </div>
+    </div>
+    <main>
+        <div class="limiter">
+            <div class="container-table100">
+              <div class="wrap-table100">
+                <div class="table100">
+                  <table>
+                    <thead>
+                      <tr class="table100-head">
+                        <th>Class Name</th>
+                        <th>Reservation ID</th>
+                        <th>Time</th>
+                        <th>Name</th>
+                        <th>Student ID</th>
+                        <th>Reservation Date</th>
+                        <th>Number of Students</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td class="column1">MAF-412</td>
+                          <td class="column2">023456732</td>
+                          <td class="column3">10.20-11.15</td>
+                          <td class="column4">Kent</td>
+                          <td class="column5">01157156</td>
+                          <td class="column6">11/23/2024</td>
+                          <td class="column7">5</td>
+                        </tr>
+                        <tr>
+                          <td class="column1">ECG-601</td>
+                          <td class="column2">023456542</td>
+                          <td class="column3">17.30-18.20</td>
+                          <td class="column4">Kent</td>
+                          <td class="column5">01157156</td>
+                          <td class="column6">11/26/2024</td>
+                          <td class="column7">10</td>
+                        </tr>
+                        <tr>
+                          <td class="column1">TEC-1102</td>
+                          <td class="column2">098756732</td>
+                          <td class="column3">14.10-15.10</td>
+                          <td class="column4">Jason</td>
+                          <td class="column5">01157057</td>
+                          <td class="column6">11/27/2024</td>
+                          <td class="column7">15</td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>        
+    </main>
+    <footer>
+      <p>&copy; 2024 National Taiwan Ocean University. All Rights Reserved.</p>
+      <ul class="footer-list">
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Contact Us</a></li>
+      </ul>
+  </footer>
+</body>
+
+<script>
+    // Assuming userId is stored in sessionStorage, localStorage, or directly from the logged-in state.
+    let userId = localStorage.getItem("userId")
+
+    if (userId) {
+        fetch('/user-history?userId=' + userId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Render reservation history (e.g., class name, reservation date, etc.)
+                    displayHistory(data.history);
+                } else {
+                    alert('Failed to load history');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    } else {
+        alert('User is not logged in or userId is missing.');
+    }
+
+</script>
+</html>

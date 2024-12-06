@@ -15,7 +15,7 @@
             <div class="class-image">
                 <img src="../img/class/cutie.jpg" alt="Class Image" width="370" height="200">
             </div>
-            <form>
+            <form id="book-class-form" enctype="multipart/form-data">
                 
                 <div class="form-group">
                     <label for="class-name">Class name:</label>
@@ -31,7 +31,6 @@
                         <div class="button-collumn">
                             
                             <button type="button" class="time-button" onclick="selectTime('10:20', this)">10:20 - 11.15</button>
-                        
                             <button type="button" class="time-button" onclick="selectTime('11:15', this)">11:15 - 12.05</button>
                             <button type="button" class="time-button" onclick="selectTime('13:10', this)">13:10 - 14.10</button>
                             <button type="button" class="time-button" onclick="selectTime('14:10', this)">14:10 - 15.10</button>
@@ -54,7 +53,7 @@
                 </div>
                 <div class="form-group">
                     <label for="photo-upload" class="upload-btn">Upload Student Card:</label>
-                    <input type="file" id="photo-upload" accept="image/*" required>
+                    <input type="file" name= "picture" id="picture" accept="image/*" required>
                 </div>
                 <div class="form-group">
                     <label for="department">Department:</label>
@@ -72,10 +71,8 @@
                     <label for="total-students">Number of Students:</label>
                     <input type="number" id="total-students" name="total-students" required>
                 </div>
-
-                
                 <div class="form-group">
-                    <button type="submit" class="submit-button">Submit</button>
+                    <button type="submit" class="submit-button" id="btn">Submit</button>
                 </div>
             </form>
         </div>
