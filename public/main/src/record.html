@@ -72,11 +72,11 @@
   <img class="bg-img" src="../img/bg.jpg">
     <div class="navbar">
       <div class="logo">
-        <img src="../img/OceanSpace.png" alt="">
+        <img src="../img/OceanSpace.png" alt="" onclick="navigateToMenu()">
       </div>
       <div class="profile">
         <img src="../img/user-icon.png">
-        <h3>Welcome Antonio</h3>
+        <h3>Welcome</h3>
       </div>
     </div>
     <main>
@@ -97,33 +97,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                          <td class="column1">MAF-412</td>
-                          <td class="column2">023456732</td>
-                          <td class="column3">10.20-11.15</td>
-                          <td class="column4">Kent</td>
-                          <td class="column5">01157156</td>
-                          <td class="column6">11/23/2024</td>
-                          <td class="column7">5</td>
-                        </tr>
-                        <tr>
-                          <td class="column1">ECG-601</td>
-                          <td class="column2">023456542</td>
-                          <td class="column3">17.30-18.20</td>
-                          <td class="column4">Kent</td>
-                          <td class="column5">01157156</td>
-                          <td class="column6">11/26/2024</td>
-                          <td class="column7">10</td>
-                        </tr>
-                        <tr>
-                          <td class="column1">TEC-1102</td>
-                          <td class="column2">098756732</td>
-                          <td class="column3">14.10-15.10</td>
-                          <td class="column4">Jason</td>
-                          <td class="column5">01157057</td>
-                          <td class="column6">11/27/2024</td>
-                          <td class="column7">15</td>
-                        </tr>
+                      <!--Fill using data from the database-->
                     </tbody>
                   </table>
                 </div>
@@ -159,6 +133,32 @@
             .catch(error => console.error('Error:', error));
     } else {
         alert('User is not logged in or userId is missing.');
+    }
+
+    // Function to display history in the table
+function displayHistory(history) {
+    const tableBody = document.querySelector("tbody");
+    tableBody.innerHTML = ""; // Clear existing rows
+
+    history.forEach(record => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${record.class_name}</td>
+            <td>${record.reservation_id}</td>
+            <td>${record.start_time}</td>
+            <td>${record.name}</td>
+            <td>${record.student_id}</td>
+            <td>${record.reservation_date}</td>
+            <td>${record.number_of_students}</td>
+        `;
+
+        tableBody.appendChild(row);
+    });
+}
+
+function navigateToMenu() {
+        window.location.href = "main-menu.html"; // Redirect to the main menu page
     }
 
 </script>

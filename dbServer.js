@@ -99,6 +99,13 @@ app.post("/login", async (req, res) => {
             console.log("--------> User does not exist");
             res.sendStatus(404); // User not found
         } else {
+
+            // Check if the user is blacklisted
+            if (result[0].is_blacklisted == 1) {
+                console.log("---------> User is blacklisted");
+                return res.status(403).json({ message: "You are blacklisted and cannot log in. Please contact the administrator!" });
+            }
+
             // Retrieve the hashed password from the result
             const hashedPassword = result[0].password_hash;
 
@@ -129,6 +136,7 @@ app.post("/login", async (req, res) => {
 
 app.set('view engine', 'ejs');
 
+// Define route for /admin
 app.get('/admin', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM user_table');
@@ -150,7 +158,7 @@ app.get('/reservation', async (req, res) => {
     }
 });
 
-// Define route for /reservation
+// Define route for /key
 app.get('/key', async (req, res) => {
     try {
         const [rows] = await db.query('SELECT * FROM key_handover_table');
@@ -161,10 +169,15 @@ app.get('/key', async (req, res) => {
     }
 });
 
-let globalUserId;
-
-app.post('/localStorage', (req, res) => {
-  globalUserId = req.body.userId; // Ensure you parse the body correctly
+// Define route for /blacklist
+app.get('/blacklist', async (req, res) => {
+    try {
+        const [rows] = await db.query('SELECT * FROM blacklist_table');
+        res.render('blacklist', { blacklist: rows });
+    } catch (error) {
+        console.error('Error fetching blacklist data:', error);
+        res.status(500).send('Error fetching blacklist data');
+    }
 });
 
 const multer = require('multer');
@@ -235,7 +248,7 @@ app.post('/update-status', upload.none(), async (req, res) => {
 
 app.post('/book-class', upload.single('picture'), async (req, res) => {
 
-    const { 'class-name': className, date, 'time' :time_buttons, name, 'student-id': student_id, department, 'phone-number': phone_number, purpose, 'total-students': total_students } = req.body;
+    const { 'class-name': className, date, 'time' :time_buttons, name, 'student-id': student_id, department, 'phone-number': phone_number, purpose, 'total-students': total_students, userId } = req.body;
 
     if (!className) {
         return res.status(400).json({ success: false, message: 'Class name is required' });
@@ -250,7 +263,7 @@ app.post('/book-class', upload.single('picture'), async (req, res) => {
         if (!user || !user[0].email) {
             return res.status(404).json({ success: false, message: 'User email not found' });
         }
- 
+        console.log(userId);
         const userEmail = user[0].email;
 
         //insert data to database
@@ -268,7 +281,7 @@ app.post('/book-class', upload.single('picture'), async (req, res) => {
                 purpose,
                 total_students,
                 "Pending",
-                globalUserId,
+                userId,
                 userEmail,
             ]
         );
@@ -326,16 +339,17 @@ app.get('/image/:reservation_id', async (req, res) => {
 });
 
 app.get('/user-history', async (req, res) => {
+    const userId = req.query.userId;
 
-    if (!globalUserId) {
+    if (!userId) {
         return res.status(400).json({ success: false, message: 'User ID is required' });
     }
 
     try {
-        // Query to fetch reservation records for the given userId from the reservation_table
+        // Query to fetch reservation records for the given userId
         const [rows] = await db.query(
-            'SELECT * FROM reservation_table WHERE user_id = ? ORDER BY reservation_date DESC, start_time DESC',
-            [globalUserId]
+            'SELECT class_name, reservation_id, start_time, name, student_id, reservation_date, number_of_students FROM reservation_table WHERE user_id = ? ORDER BY reservation_id ASC',
+            [userId]
         );
 
         if (rows.length === 0) {
@@ -352,35 +366,129 @@ app.get('/user-history', async (req, res) => {
 // Endpoint to handle form submission
 app.post('/key-handover', upload.none(), async (req, res) => {
     const { reservation_id, key_given_time, key_return_time, status } = req.body;
-    console.log(req.body);
   
     try {
       // Check if the reservation ID already exists in the table
       const checkSql = 'SELECT * FROM key_handover_table WHERE reservation_id = ?';
       const checkResult = await db.query(checkSql, [reservation_id]);
-      console.log(checkResult)
-  
-      if (checkResult[0].length > 0) {
-        // If the reservation ID exists, update the status only
-        const updateSql = 'UPDATE key_handover_table SET status = ? WHERE reservation_id = ?';
-        await db.query(updateSql, [status, reservation_id]);
-        console.log('Status updated successfully.');
-        
-        return res.json({ success: true, message: 'Key handover status updated successfully!' });
-      } else {
-        // If the reservation ID does not exist, insert a new record
-        const insertSql = `
-          INSERT INTO key_handover_table (reservation_id, key_given_time, key_return_time, status)
-          VALUES (?, ?, ?, ?)
-        `;
-        await db.query(insertSql, [reservation_id, key_given_time, key_return_time, status]);
-        console.log('Record added successfully.');
-        return res.json({ success: true, message: 'Key handover record added successfully!' });
+
+      const userIdSql = 'SELECT user_id FROM reservation_table WHERE reservation_id = ?';
+      const userIdResult = await db.query(userIdSql, [reservation_id]);
+
+      // Check if the reservation ID  exists in the user table
+      const [checkReservation] = await db.query('SELECT * FROM reservation_table WHERE user_id = ?', [reservation_id]);
+
+      if (checkReservation.length > 0){
+        if (checkResult[0].length > 0) {
+            // If the reservation ID exists, update the status only
+            const updateSql = 'UPDATE key_handover_table SET status = ? WHERE reservation_id = ?';
+            await db.query(updateSql, [status, reservation_id]);
+    
+            if (status == "Overdue"){
+    
+                const blacklistStart = new Date(); // Current date
+                const blacklistEnd = new Date();
+                blacklistEnd.setDate(blacklistStart.getDate() + 7); // Add 7 days (1 week) to the current date
+    
+                // Add to blacklist table
+                const blacklistSql = `
+                    INSERT INTO blacklist_table (user_id, reason, blacklist_start, blacklist_end)
+                    VALUES (?, ?, ?, ?)
+                `;
+    
+                // Convert dates to string format (YYYY-MM-DD) for MySQL compatibility
+                const blacklistStartDate = blacklistStart.toISOString().split('T')[0];
+                const blacklistEndDate = blacklistEnd.toISOString().split('T')[0];
+    
+                await db.query(blacklistSql, [userIdResult[0][0].user_id, "Your key is overdue", blacklistStartDate, blacklistEndDate]);
+    
+                // Blacklist the user from logging in
+                const updateSql = 'UPDATE user_table SET is_blacklisted = ? WHERE user_id = ?';
+                await db.query(updateSql, [1, userIdResult[0][0].user_id]);
+            }
+            
+            return res.json({ success: true, message: 'Key handover status updated successfully!' });
+          } else {
+            // If the reservation ID does not exist, insert a new record
+            const insertSql = `
+              INSERT INTO key_handover_table (reservation_id, key_given_time, key_return_time, status)
+              VALUES (?, ?, ?, ?)
+            `;
+            await db.query(insertSql, [reservation_id, key_given_time, key_return_time, status]);
+            console.log('Record added successfully.');
+            return res.json({ success: true, message: 'Key handover record added successfully!' });
+          }
+      } else{
+        return res.json({ success: false, message: 'Reservation ID does not exist in the user'})
       }
+      
     } catch (err) {
       console.error('Error:', err);
       return res.status(500).send('An error occurred while processing the request.');
     }
   });
   
+// Endpoint to handle blacklist form submission
+app.post('/blacklist-status', upload.none(), async (req, res) => {
+    const { user_id, reason, blacklist_start, blacklist_end, status } = req.body;
+    console.log(req.body);
   
+    try {
+
+        // Check if the user ID already exists in the blacklist table
+        const [checkResult] = await db.query('SELECT * FROM blacklist_table WHERE user_id = ?', [user_id]);
+
+        // Check if the user ID  exists in the user table
+        const [checkUser] = await db.query('SELECT * FROM user_table WHERE user_id = ?', [user_id]);
+
+        if(checkUser.length > 0){
+            if (checkResult.length > 0) {
+                // If user is already blacklisted, update or delete depending on status
+                if (status == 0) {
+                    // If status is 0, remove from blacklist
+                    await db.query('DELETE FROM blacklist_table WHERE user_id = ?', [user_id]);
+                    await db.query('UPDATE user_table SET is_blacklisted = 0 WHERE user_id = ?', [user_id]);
+                    return res.json({ success: true, message: 'User removed from blacklist.' });
+                } else {
+                    // Convert dates to string format (YYYY-MM-DD) for MySQL compatibility
+                    const blacklistStartDate = new Date(blacklist_start).toISOString().split('T')[0];
+                    const blacklistEndDate = new Date(blacklist_end).toISOString().split('T')[0];
+    
+                    // If status is non-zero, update the blacklist details
+                    await db.query(
+                        'UPDATE blacklist_table SET reason = ?, blacklist_start = ?, blacklist_end = ? WHERE user_id = ?',
+                        [reason, blacklistStartDate, blacklistEndDate, user_id]
+                    );
+                    await db.query('UPDATE user_table SET is_blacklisted = 1 WHERE user_id = ?', [user_id]);
+                    return res.json({ success: true, message: 'Blacklist information updated successfully!' });
+                }
+            } else {
+                // If the user is not found in the blacklist, insert a new record
+                if (status !== 0) {
+    
+                    // Convert dates to string format (YYYY-MM-DD) for MySQL compatibility
+                    const blacklistStartDate = new Date(blacklist_start).toISOString().split('T')[0];
+                    const blacklistEndDate = new Date(blacklist_end).toISOString().split('T')[0];
+                    console.log(blacklistStartDate)
+    
+                    await db.query(
+                        'INSERT INTO blacklist_table (user_id, reason, blacklist_start, blacklist_end) VALUES (?, ?, ?, ?)',
+                        [user_id, reason, blacklistStartDate, blacklistEndDate]
+                    );
+                    await db.query('UPDATE user_table SET is_blacklisted = 1 WHERE user_id = ?', [user_id]);
+                    return res.json({ success: true, message: 'User added to blacklist.' });
+                } else {
+                    return res.status(400).json({ success: false, message: 'Cannot remove user from blacklist, they are not blacklisted.' });
+                }
+            }
+        } else{
+            return res.status(400).json({ success: false, message: 'User not found.'})
+        }
+
+        
+    } catch (err) {
+        console.error('Error:', err);
+        return res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
+    }
+});
+

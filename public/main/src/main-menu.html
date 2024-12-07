@@ -10,11 +10,11 @@
   <img class="bg-img" src="../img/bg.jpg">
     <div class="navbar">
       <div class="logo">
-        <img src="../img/OceanSpace.png" alt="">
+        <img src="../img/OceanSpace.png" alt="" onclick="navigateToMenu()">
       </div>
       <div class="profile">
         <img src="../img/user-icon.png">
-        <h3>Welcome Antonio</h3>
+        <h3>Welcome</h3>
       </div>
     </div>
     <main>
@@ -66,6 +66,10 @@
 
   updateDateTime();
   setInterval(updateDateTime, 1000);
+
+  function navigateToMenu() {
+        window.location.href = "main-menu.html"; // Redirect to the main menu page
+    }
   
 </script>
 </html>

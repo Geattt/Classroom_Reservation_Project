@@ -56,8 +56,18 @@ function bookClass(){
     var purpose = document.getElementById('purpose').value;
     var total_students = document.getElementById('total-students').value;
 
+     // Retrieve userId from localStorage
+     const userId = localStorage.getItem('userId');
+     if (!userId) {
+         alert('User ID not found in local storage.');
+         return;
+     }
+
     const form = document.getElementById('book-class-form');
     const formData = new FormData(form); // Automatically includes file and input fields
+
+    // Append userId to the formData
+    formData.append('userId', userId);
 
     fetch('/book-class', {
         method: 'POST',
