@@ -67,7 +67,7 @@ function bookClass(){
       .then(data => {
         if (data.success) {
           alert('Request successfully submitted');
-          location.reload(); // Reload to reflect changes
+          location.href="main-menu.html" // Reload to reflect changes
         } else {
           alert('Error submitting form : ' + data.message);
         }
