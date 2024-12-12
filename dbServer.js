@@ -4,6 +4,14 @@ const cors = require('cors');
 app.use(cors());
 const mysql = require("mysql2/promise")
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
+
+const multer = require('multer');
+
+// Configure multer to handle file uploads
+const storage = multer.memoryStorage(); // Stores file in memory as Buffer
+const upload = multer({ storage });
 
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
@@ -158,6 +166,28 @@ app.get('/reservation', async (req, res) => {
     }
 });
 
+// Define route for /classroom
+app.get('/classroom', async (req, res) => {
+    res.render('classroom', { classroom: [] });
+});
+
+app.post('/classroom-query', upload.none(), async(req, res) =>{
+    const {class_name, date} = req.body;
+    const currentDate = new Date(date);  // Assuming date is a string or ISO date format
+    currentDate.setDate(currentDate.getDate());  // Add one day
+
+    // Convert currentDate to ISO string and then extract the date part
+    const dateOnly = currentDate.toISOString().split('T')[0];
+
+    try{
+        const [rows] = await db.query('SELECT * FROM classroom_table WHERE class_name = ? AND date = ? ORDER BY classroom_id DESC', [class_name, dateOnly]);
+        res.json(rows); // Send the data as JSON
+    } catch (error) {
+        console.error('Error fetching classroom data:', error);
+        res.status(500).send('Error fetching classroom data');
+    }
+});
+
 // Define route for /key
 app.get('/key', async (req, res) => {
     try {
@@ -180,11 +210,82 @@ app.get('/blacklist', async (req, res) => {
     }
 });
 
-const multer = require('multer');
+// Define route for /statistics
+app.get('/statistics', async (req, res) => {
+    try {
+        //Count Reservations for Each Classroom
+        const [rows] = await db.query(` SELECT class_name, 
+                                            COUNT(*) AS reservations_this_month 
+                                        FROM 
+                                            reservation_table 
+                                        WHERE 
+                                            MONTH(reservation_date) = MONTH(CURRENT_DATE) 
+                                            AND YEAR(reservation_date) = YEAR(CURRENT_DATE)
+                                        GROUP BY 
+                                            class_name;
+                                    `);
 
-// Configure multer to handle file uploads
-const storage = multer.memoryStorage(); // Stores file in memory as Buffer
-const upload = multer({ storage });
+        //Peak Usage Time
+        const [rows2] = await db.query(`SELECT 
+                                            COUNT(*) AS reservations , 
+                                            HOUR(start_time) AS hour 
+                                        FROM 
+                                            reservation_table
+                                        GROUP BY 
+                                            HOUR(start_time)
+                                        ORDER BY 
+                                            reservations DESC
+                                        LIMIT 5;
+                                        `)
+        
+        //Average Number of Students per Reservation
+        const [rows3] = await db.query(`SELECT 
+                                            class_name, 
+                                            Round(AVG(number_of_students)) AS average_students_per_reservation
+                                        FROM 
+                                            reservation_table
+                                        GROUP BY 
+                                            class_name;
+                                        `);
+
+        //Most Frequent Users
+        const [rows4] = await db.query(`SELECT 
+                                            name, 
+                                            COUNT(*) AS reservation_count 
+                                        FROM 
+                                            reservation_table 
+                                        GROUP BY 
+                                            name 
+                                        ORDER BY 
+                                            reservation_count DESC
+                                        LIMIT 5;
+                                                `);
+
+
+        //Availability Class rate
+        const [rows5] = await db.query(`SELECT 
+                                            class_name, 
+                                            (COUNT(CASE WHEN status = 'empty' THEN 1 END) / COUNT(*)) * 100 AS availability_rate
+                                        FROM 
+                                            classroom_table
+                                        GROUP BY 
+                                            class_name;
+                                                        `);
+
+        // Combine data into a single object
+        res.render('statistics', { 
+            reservations: rows,
+            time: rows2,
+            number: rows3,
+            users: rows4,
+            availability: rows5
+        });
+    } catch (error) {
+        console.error('Error fetching blacklist data:', error);
+        res.status(500).send('Error fetching blacklist data');
+    }
+});
+
 
 // Route to handle form submission
 app.post('/update-status', upload.none(), async (req, res) => {
@@ -431,7 +532,6 @@ app.post('/key-handover', upload.none(), async (req, res) => {
 // Endpoint to handle blacklist form submission
 app.post('/blacklist-status', upload.none(), async (req, res) => {
     const { user_id, reason, blacklist_start, blacklist_end, status } = req.body;
-    console.log(req.body);
   
     try {
 
@@ -492,3 +592,74 @@ app.post('/blacklist-status', upload.none(), async (req, res) => {
     }
 });
 
+// Fetch status for a given class and date
+app.post('/get-status', async (req, res) => {
+    const { className, date } = req.body;
+
+    try {
+        // Check the status of the class in the classroom table
+        const [checkStatus] = await db.query(
+            'SELECT time, status FROM classroom_table WHERE class_name = ? AND date = ?', 
+            [className, date]
+        );
+
+        // Send the fetched data back to the client
+        return res.json({ success: true, data: checkStatus });
+    } catch (err) {
+        console.error('Error:', err);
+        return res.status(500).json({ success: false, message: 'An error occurred while processing the request.' });
+    }
+});
+
+app.post('/update-class-status', upload.none(), async (req, res) => {
+    console.log('Request Body:', req.body);  // Log the entire request body
+    const { classroomId, newStatus } = req.body;
+
+    console.log(req.body)
+  
+    try {
+      // Update status in the database
+      await db.query('UPDATE classroom_table SET status = ? WHERE classroom_id = ?', [newStatus, classroomId]);
+      res.json({ success: true, message: 'Classroom status updated successfully.' });
+
+    } catch (error) {
+      console.error('Error updating status:', error);
+      res.json({ success: false });
+    }
+  });
+
+// Export data to excel
+app.get('/export-reservations', async (req, res) => {
+    try {
+        console.log("I am clicked")
+      // Query to fetch reservation data
+      const [rows] = await db.query('SELECT reservation_id, status, class_name, reservation_date, start_time, name, student_id, department, phone_number, purpose, number_of_students, user_id, email FROM reservation_table');
+  
+      // Define CSV file path
+      const filePath = path.join(__dirname, 'exports', 'reservations.csv');
+  
+      // Ensure the exports directory exists
+      if (!fs.existsSync(path.dirname(filePath))) {
+        fs.mkdirSync(path.dirname(filePath));
+      }
+  
+      // Write data to a CSV file
+      const headers = Object.keys(rows[0]).join(',') + '\n';
+      const csvData = rows.map(row => Object.values(row).join(',')).join('\n');
+  
+      fs.writeFileSync(filePath, headers + csvData, {encoding: 'utf-8'});
+  
+      // Send the file to the user
+      res.download(filePath, 'reservations.csv', err => {
+        console.log('CSV file path:', filePath);
+        if (err) {
+          console.error('Error during download:', err);
+          res.status(500).send('Error occurred while exporting data');
+        }
+      });
+  
+    } catch (error) {
+      console.error('Error exporting data:', error);
+      res.status(500).send('Failed to export data');
+    }
+  });

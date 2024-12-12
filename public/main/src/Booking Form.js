@@ -86,3 +86,77 @@ function bookClass(){
 }
 
 
+function disableOccupiedButtons(data) {
+    
+    // Enable all buttons first to reset the state
+    const allButtons = document.querySelectorAll('.time-button');
+    allButtons.forEach(button => {
+        button.disabled = false;
+        button.classList.remove('disabled-button'); // Remove the disabled styling
+    });
+
+    data.forEach(slot => {
+        // Remove seconds from the time (e.g., '17:30:00' -> '17:30')
+        const timeWithoutSeconds = slot.time.slice(0, 5);
+        
+        if (slot.status === 'Occupied') {
+            const button = document.querySelector(`.time-button[onclick="selectTime('${timeWithoutSeconds}', this)"]`);
+            if (button) {
+                button.disabled = true;
+                button.classList.add('disabled-button'); // Optional: Add a CSS class for styling
+            }
+        }
+    });
+}
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Get the class name from the URL and store it in a variable
+    var className = getQueryParam('class');
+    // Set the class name input value
+    document.getElementById('class-name').value = className;
+
+    // Get the input field for the date
+    const dateInput = document.getElementById('date');
+    
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date();
+    const todayFormatted = today.toISOString().split('T')[0];  // Extract the YYYY-MM-DD part
+    
+    // Set the default value of the date input to today's date
+    dateInput.value = dateInput.value || todayFormatted;
+
+    // Use the selected or today's date
+    const selectedDate = dateInput.value;
+
+    // Call fetchStatus with the selected class name and the selected date
+    fetchStatus(className, selectedDate);
+
+    // Listen for any change in the date input field
+    dateInput.addEventListener('change', (event) => {
+        const newDate = event.target.value;
+        fetchStatus(className, newDate);
+    });
+});
+
+
+// Function to fetch the status from the server
+function fetchStatus(className, date) {
+    fetch('/get-status', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ className, date })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Fetched status:', data.data);
+            disableOccupiedButtons(data.data);
+        } else {
+            console.error('Error fetching status:', data.message);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+

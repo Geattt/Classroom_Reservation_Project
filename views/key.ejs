@@ -32,6 +32,12 @@
             </a>
           </li>
           <li>
+            <a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M240-200h120v-200q0-17 11.5-28.5T400-440h160q17 0 28.5 11.5T600-400v200h120v-360L480-740 240-560v360Zm-80 0v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H560q-17 0-28.5-11.5T520-160v-200h-80v200q0 17-11.5 28.5T400-120H240q-33 0-56.5-23.5T160-200Zm320-270Z"/></svg>
+                <span onclick="window.location.href = 'classroom'">Classroom</span>
+            </a>
+          </li>
+          <li>
             <button onclick=toggleSubMenu(this) class="dropdown-btn">
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h207q16 0 30.5 6t25.5 17l57 57h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Zm400-160v40q0 17 11.5 28.5T600-320q17 0 28.5-11.5T640-360v-40h40q17 0 28.5-11.5T720-440q0-17-11.5-28.5T680-480h-40v-40q0-17-11.5-28.5T600-560q-17 0-28.5 11.5T560-520v40h-40q-17 0-28.5 11.5T480-440q0 17 11.5 28.5T520-400h40Z"/></svg>
               <span>Update</span>
@@ -41,26 +47,9 @@
               <div>
                 <li><a href="#"><span onclick="window.location.href = 'blacklist'">User Blacklist</span></a></li>
                 <li class="active"><a href="#"><span onclick="window.location.href = 'key'">Key Status</span></a></li>
-                <li><a href="#">Project</a></li>
+                <li><a href="#"><span onclick="window.location.href = 'statistics'">Statistics</span></a></li>
               </div>
             </ul>
-          </li>
-          <li>
-          </li>
-          <li>
-            <a href="notification.html">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" class="bi bi-bell-fill" viewBox="0 0 16 16">
-                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2m.995-14.901a1 1 0 1 0-1.99 0A5 5 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901"/>
-                  </svg>
-                                               
-              <span>Notification</span>
-            </a>
-          </li>
-          <li>
-            <a href="classroom.html">
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M240-200h120v-200q0-17 11.5-28.5T400-440h160q17 0 28.5 11.5T600-400v200h120v-360L480-740 240-560v360Zm-80 0v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H560q-17 0-28.5-11.5T520-160v-200h-80v200q0 17-11.5 28.5T400-120H240q-33 0-56.5-23.5T160-200Zm320-270Z"/></svg>
-              <span>Classroom</span>
-            </a>
           </li>
         </ul>
       </nav>
@@ -104,8 +93,8 @@
                                 <tr>
                                     <td><%= key.key_handover_id %></td>
                                     <td><%= key.reservation_id %></td>
-                                    <td><%= key.key_given_time %></td>
-                                    <td><%= key.key_return_time %></td>
+                                    <td><%= new Date(key.key_given_time).toISOString().slice(0, 10) %></td>
+                                    <td><%= new Date(key.key_return_time).toISOString().slice(0, 10) %></td>
                                     <td><%= key.status %></td>
                                 </tr>
                             <% }) %>

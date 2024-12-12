@@ -4,48 +4,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservation Table</title>
+    <title>Classroom Table</title>
     <link rel="stylesheet" href="admin_style_home.css">
     <script type="text/javascript" src="admin.js" defer></script>
-    <style>
-    /* Style for the Modal */
-    .modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
-        display: none;
-        justify-content: center;
-        align-items: center;
-        z-index: 1000; /* Ensure it is on top */
-    }
 
-    .modal img {
-        max-width: 80%; /* Control the size of the image */
-        max-height: 80%; /* Ensure the image fits within the modal */
-    }
-
-    .close {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        font-size: 40px;
-        color: white;
-        cursor: pointer;
-    }
-
-    /* Optional: Style the clickable image */
-    .clickable-image {
-        cursor: pointer;
-        transition: transform 0.3s ease; /* Smooth zoom effect */
-    }
-
-    .clickable-image:hover {
-        transform: scale(1.05); /* Zoom effect on hover */
-    }
-    </style>
 </head>
 <body>
     
@@ -63,13 +25,13 @@
               <span onclick="window.location.href = 'admin'">User</span>
             </a>
           </li>
-          <li class="active">
+          <li>
             <a href="#">
               <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M520-640v-160q0-17 11.5-28.5T560-840h240q17 0 28.5 11.5T840-800v160q0 17-11.5 28.5T800-600H560q-17 0-28.5-11.5T520-640ZM120-480v-320q0-17 11.5-28.5T160-840h240q17 0 28.5 11.5T440-800v320q0 17-11.5 28.5T400-440H160q-17 0-28.5-11.5T120-480Zm400 320v-320q0-17 11.5-28.5T560-520h240q17 0 28.5 11.5T840-480v320q0 17-11.5 28.5T800-120H560q-17 0-28.5-11.5T520-160Zm-400 0v-160q0-17 11.5-28.5T160-360h240q17 0 28.5 11.5T440-320v160q0 17-11.5 28.5T400-120H160q-17 0-28.5-11.5T120-160Zm80-360h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
               <span onclick="window.location.href = 'reservation'">Reservation</span>
             </a>
           </li>
-          <li>
+          <li class="active">
             <a href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e8eaed"><path d="M240-200h120v-200q0-17 11.5-28.5T400-440h160q17 0 28.5 11.5T600-400v200h120v-360L480-740 240-560v360Zm-80 0v-360q0-19 8.5-36t23.5-28l240-180q21-16 48-16t48 16l240 180q15 11 23.5 28t8.5 36v360q0 33-23.5 56.5T720-120H560q-17 0-28.5-11.5T520-160v-200h-80v200q0 17-11.5 28.5T400-120H240q-33 0-56.5-23.5T160-200Zm320-270Z"/></svg>
                 <span onclick="window.location.href = 'classroom'">Classroom</span>
@@ -83,7 +45,7 @@
             </button>
             <ul class="sub-menu">
               <div>
-                <li><a href="#"><span onclick="window.location.href = 'blacklist'">User Blacklist</span></a></li>
+                <li><a href="#"><span onclick="window.location.href = 'blacklist'">User Blacklist</span> </a></li>
                 <li><a href="#"><span onclick="window.location.href = 'key'">Key Status</span></a></li>
                 <li><a href="#"><span onclick="window.location.href = 'statistics'">Statistics</span></a></li>
               </div>
@@ -92,78 +54,144 @@
         </ul>
       </nav>
       <main>
-        <h1>User Information</h1>
+        <h1>Classroom Search Information</h1>
+        <form id="classroom-form" enctype="multipart/form-data">
+            <label for="class_name">Class Name</label>
+            <select id="class_name" name="class_name" required>
+                <option value="INS-101">INS-101</option>
+                <option value="INS-105">INS-105</option>
+                <option value="INS-203">INS-203</option>
+                <option value="INS-303">INS-303</option>
+                <option value="ECG-B107">ECG-B107</option>
+                <option value="ECG-206">ECG-206</option>
+                <option value="ECG-607">ECG-607</option>
+                <option value="ECG-610">ECG-610</option>
+                <option value="TEC-0601">TEC-0601</option>
+                <option value="TEC-1008">TEC-1008</option>
+                <option value="TEC-1102">TEC-1102</option>
+                <option value="BOH-401">BOH-401</option>
+                <option value="BOH-402">BOH-402</option>
+                <option value="BOH-403">BOH-403</option>
+                <option value="BOH-601">BOH-601</option>
+                <option value="MAF-412">MAF-412</option>
+                <option value="MAF-413">MAF-413</option>
+                <option value="MAF-415">MAF-415</option>
+                <option value="MAF-419">MAF-419</option>
+                <option value="MAF-420">MAF-420</option>
+            </select>
+        
+            <label for="date">Date</label>
+            <input type="date" id="date" name="date">
+        
+        
+            <button type="submit">Search</button>
+          </form>
+        <h1>Classroom Information</h1>
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
-                            <th>Reservation ID</th>
-                            <th>Status</th>
                             <th>Class Name</th>
-                            <th>Reservation Date</th>
-                            <th>Start Time</th>
-                            <th>Name</th>
-                            <th>Purpose</th>
-                            <th>Number of Students</th>
-                            <th>Picture</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <% if (reservation && reservation.length > 0) { %>
-                            <% reservation.forEach(function(reservation) { %>
+                        <% if (classroom && classroom.length > 0) { %>
+                            <% classroom.forEach(function(classroom) { %>
                                 <tr>
-                                    <td><%= reservation.reservation_id %></td>
-                                    <td>
-                                        <select onchange="updateStatus('<%= reservation.reservation_id %>', this.value)">
-                                          <option value="pending" <%= reservation.status === 'pending' ? 'selected' : '' %>>Pending</option>
-                                          <option value="approved" <%= reservation.status === 'approved' ? 'selected' : '' %>>Approved</option>
-                                          <option value="rejected" <%= reservation.status === 'rejected' ? 'selected' : '' %>>Rejected</option>
-                                        </select>
-                                    </td>
-                                    <td><%= reservation.class_name %></td>
-                                    <td><%= new Date(reservation.reservation_date).toISOString().slice(0, 10) %></td>
-                                    <td><%= reservation.start_time %></td>
-                                    <td><%= reservation.name %></td>
-                                    <td><%= reservation.purpose %></td>
-                                    <td><%= reservation.number_of_students %></td>
-                                    <td><% if (reservation.picture) { %>
-                                      <img src="/image/<%= reservation.reservation_id %>" alt="Reservation Picture" style="width:100px;height:auto;" class="clickable-image">
-                                      <% } else { %>
-                                          No image available
-                                      <% } %>
-                                    </td>
+                                    <td><%= classroom.class_name %></td>
+                                    <td><%= new Date(classroom.date).toISOString().slice(0, 10) %></td>
+                                    <td><%= classroom.time %></td>
+                                    <td><%= classroom.status %></td>
                                 </tr>
                             <% }) %>
                         <% } else { %>
                             <tr>
-                                <td colspan="9" style="text-align: center;">No data available</td>
+                                <td colspan="4" style="text-align: center;">No data available</td>
                             </tr>
                         <% } %>
                     </tbody>
                 </table>
             </div>
-            <button onclick="exportReservations()">Export Reservations</button>  
       </main>
     </nav>
-    <!-- Modal Structure -->
-<div id="imageModal" style="display: none;" class="modal">
-  <span id="closeModal" class="close">&times;</span>
-  <img id="modalImage" src="" alt="Enlarged Image" style="max-width: 100%; height: auto;">
-</div>
-
      
 </body>
 
-<script>
-    const updateStatus = (reservationId, newStatus) => {
-      const formData = new FormData();
-      formData.append('reservationId', reservationId);  // Append form fields to formData
-      formData.append('newStatus', newStatus);
-      for (const [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-      }
 
-      fetch('/update-status', {
+<script>
+  document.querySelector('form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    classroomSearch(); // Call the classroomSearch function
+});
+
+function classroomSearch() {
+    const form = document.getElementById('classroom-form');
+    const formData = new FormData(form);
+
+    fetch('/classroom-query', {
+        method: 'POST',
+        body: formData, // Send as multipart/form-data
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); // Parse JSON response
+    })
+    .then(data => {
+        console.log(data);
+        const tbody = document.querySelector('tbody');
+        tbody.innerHTML = ''; // Clear existing rows
+
+        if (data.length > 0) {
+            data.forEach(classroom => {
+
+                // Add 1 day to classroom.date
+                const date = new Date(classroom.date);
+                date.setDate(date.getDate() + 1); // Add 1 day
+                const formattedDate = date.toISOString().slice(0, 10); // Format as YYYY-MM-DD
+
+                const row = document.createElement('tr');
+                const selectedEmpty = classroom.status === 'Empty' ? 'selected' : '';
+                const selectedOccupied = classroom.status === 'Occupied' ? 'selected' : '';
+
+                row.innerHTML = `
+                    <td>${classroom.class_name}</td>
+                    <td>${formattedDate}</td>
+                    <td>${classroom.time}</td>
+                    <td>
+                        <select onchange="updateClassStatus('${classroom.classroom_id}', this.value)">
+                          <option value="Empty" ${selectedEmpty}>Empty</option>
+                          <option value="Occupied" ${selectedOccupied}>Occupied</option>
+                        </select>
+                    </td>
+                `;
+                console.log(classroom.classroom_id)
+                tbody.appendChild(row);
+            });
+        } else {
+            // Add a row indicating no data
+            const noDataRow = document.createElement('tr');
+            noDataRow.innerHTML = `<td colspan="4" style="text-align: center;">No data available</td>`;
+            tbody.appendChild(noDataRow);
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching classroom data:', error);
+    });
+}
+
+function updateClassStatus (classroomId, newStatus) {
+      const formData = new FormData();
+      formData.append('classroomId', classroomId);  // Append form fields to formData
+      formData.append('newStatus', newStatus);
+
+      console.log(formData);
+
+      fetch('/update-class-status', {
         method: 'POST',
         body: formData,  // Send as multipart/form-data
       })
@@ -178,51 +206,6 @@
         .catch((error) => console.error('Error:', error));
     };
 
-
-    // Get the modal and elements
-    const modal = document.getElementById("imageModal");
-    const modalImage = document.getElementById("modalImage");
-    const closeModal = document.getElementById("closeModal");
-
-    // Get all images with the class 'clickable-image'
-    const images = document.querySelectorAll('.clickable-image');
-
-    // When an image is clicked, show the modal with the enlarged image
-    images.forEach(image => {
-        image.addEventListener('click', function() {
-            // Set the src of the modal image to the clicked image's src
-            modalImage.src = this.src;
-            modal.style.display = "flex"; // Show the modal
-        });
-    });
-
-    // Close the modal when the close button is clicked
-    closeModal.addEventListener('click', function() {
-        modal.style.display = "none"; // Hide the modal
-    });
-
-    // Close the modal if the user clicks outside of the image
-    window.onclick = function(event) {
-        if (event.target === modal) {
-            modal.style.display = "none";
-        }
-    };
-
-    // Function to trigger the export
-    function exportReservations() {
-      fetch('/export-reservations', {
-        method: 'GET',
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-      })
-      .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-        alert('Failed to export reservations. Please try again.');
-      });
-    }
-  </script>
+</script>
 
 </html>
