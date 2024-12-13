@@ -6,8 +6,11 @@ const mysql = require("mysql2/promise")
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
-
 const multer = require('multer');
+
+const passport = require('passport');
+const session = require('express-session');
+const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 
 // Configure multer to handle file uploads
 const storage = multer.memoryStorage(); // Stores file in memory as Buffer
@@ -663,3 +666,83 @@ app.get('/export-reservations', async (req, res) => {
       res.status(500).send('Failed to export data');
     }
   });
+
+// Configure session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Configure Passport Google Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+}, (accessToken, refreshToken, profile, done) => {
+    return done(null, profile);
+}));
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+// Routes
+app.get('/', (req, res) => res.send('<a href="/auth/google">Sign in with Google</a>'));
+
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+
+// Google Sign-In callback route
+app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/' }),
+  async(req, res) => {
+    // After Google login, check if the user exists in the database
+    const userID = req.user.id;
+    const userEmail = req.user.emails[0].value;  // Google email
+    const userName = req.user.name.givenName;      // Google name
+
+    // Query to check if the user already exists in the database
+
+    try{
+        const [result] = await db.query('SELECT * FROM user_table WHERE email = ?', [userEmail]);
+        if(result.length > 0) {
+            // User already exists
+            // Check if the user is blacklisted
+            if (result[0].is_blacklisted == 1) {
+                console.log("---------> User is blacklisted");
+                return res.status(403).json({ message: "You are blacklisted and cannot log in. Please contact the administrator!" });
+            }
+
+            res.redirect('/main/src/main-menu.html');
+        }else{
+            // User does not exist, create a new user and redirect to main menu
+            const [user] = await db.query('INSERT INTO user_table (user_type, user_name, email, third_party_id) VALUES ("student", ?, ?, ?);', [userName, userEmail, userID]);
+            if(user.affectedRows > 0){
+                res.redirect('/main/src/main-menu.html');
+            }else{
+                res.status(500).send('Error creating user');
+            }
+            
+        }
+    } catch(error){
+        console.log(error);
+        return res.status(500).json({ error: 'Database error' });
+    }
+
+}
+);
+
+app.get('/profile', (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/');
+    res.json(req.user);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout(() => res.redirect('/'));
+});
