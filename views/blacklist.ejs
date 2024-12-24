@@ -95,8 +95,8 @@
                                     <td><%= blacklist.blacklist_id %></td>
                                     <td><%= blacklist.user_id %></td>
                                     <td><%= blacklist.reason %></td>
-                                    <td><%= blacklist.blacklist_start %></td>
-                                    <td><%= blacklist.blacklist_end %></td>
+                                    <td><%= new Date(blacklist.blacklist_start).toISOString().slice(0, 10) %></td>
+                                    <td><%= new Date(blacklist.blacklist_end).toISOString().slice(0, 10) %></td>
                                 </tr>
                             <% }) %>
                         <% } else { %>

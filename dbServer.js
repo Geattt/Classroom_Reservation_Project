@@ -16,6 +16,13 @@ const { Strategy: GoogleStrategy } = require('passport-google-oauth20');
 const storage = multer.memoryStorage(); // Stores file in memory as Buffer
 const upload = multer({ storage });
 
+const bodyParser = require('body-parser');
+// Middleware for parsing JSON
+app.use(bodyParser.json());
+
+// Middleware for parsing URL-encoded data
+app.use(bodyParser.urlencoded({ extended: true }));
+
 // Serve static files from the 'public' directory
 app.use(express.static('public'));
 app.use('/assets', express.static('assets'));
@@ -91,6 +98,7 @@ app.post("/createUser", async (req, res) => {
 
 //LOGIN (AUTHENTICATE USER)
 app.post("/login", async (req, res) => {
+    console.log(req.body)
     const user = req.body.name;
     const password = req.body.password;
 
@@ -423,7 +431,7 @@ app.get('/image/:reservation_id', async (req, res) => {
     try {
         // Query your database to get the image data (BLOB) based on reservation_id
         const [result] = await db.query('SELECT picture FROM reservation_table WHERE reservation_id = ?', [reservation_id]);
-
+        
         // Check if the image exists for this reservation
         if (result.length === 0 || !result[0].picture) {
             return res.status(404).send('Image not found');
@@ -432,7 +440,12 @@ app.get('/image/:reservation_id', async (req, res) => {
         const pictureBuffer = result[0].picture;  // Assuming 'picture' is the BLOB field in the table
 
         // Set the content type for the image (adjust based on your image format)
-        res.setHeader('Content-Type', 'image/jpeg');  // Change to image/png or other formats if necessary
+        res.setHeader('Content-Type', 'image/png');  // Change to image/png or other formats if necessary
+
+        // Prevent caching
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         
         // Send the image data as the response
         res.send(pictureBuffer);
@@ -480,7 +493,7 @@ app.post('/key-handover', upload.none(), async (req, res) => {
       const userIdResult = await db.query(userIdSql, [reservation_id]);
 
       // Check if the reservation ID  exists in the user table
-      const [checkReservation] = await db.query('SELECT * FROM reservation_table WHERE user_id = ?', [reservation_id]);
+      const [checkReservation] = await db.query('SELECT * FROM reservation_table WHERE reservation_id = ?', [reservation_id]);
 
       if (checkReservation.length > 0){
         if (checkResult[0].length > 0) {
@@ -737,12 +750,3 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 
 }
 );
-
-app.get('/profile', (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/');
-    res.json(req.user);
-});
-
-app.get('/logout', (req, res) => {
-    req.logout(() => res.redirect('/'));
-});
