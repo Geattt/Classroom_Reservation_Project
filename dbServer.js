@@ -53,7 +53,7 @@ db.getConnection( (err, connection)=> {
 const port = process.env.PORT
 app.listen(port, ()=> console.log(`Server Started on port ${port}...`))
 
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcryptjs")
 app.use(express.json())
 //middleware to read req.body.<params>
 
