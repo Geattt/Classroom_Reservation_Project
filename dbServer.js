@@ -30,7 +30,7 @@ app.use('/assets', express.static('assets'));
 
 require("dotenv").config()
 
-const DB_HOST = 'bt8kulbdpgvgv320qtox-mysql.services.clever-cloud.com'
+const DB_HOST = '34.211.200.85'
 const DB_USER = 'root'
 const DB_PASSWORD = 'admin'
 const DB_DATABASE = 'classroom_reservation'
