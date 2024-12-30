@@ -26,3 +26,6 @@ reservation_id,status,class_name,reservation_date,start_time,name,student_id,dep
 36,pending,ECG-B107,Sun Dec 08 2024 00:00:00 GMT+0800 (Taipei Standard Time),09:00:00,test1,01157160,Department of Computer Science and Engineering,09161365698,Meeting,12,,kent.ma04@gmail.com
 37,pending,TEC-0601,Tue Dec 10 2024 00:00:00 GMT+0800 (Taipei Standard Time),09:00:00,fefe,01157160,Department of Computer Science and Engineering,09161365698,Meeting,56,2,kent.ma04@gmail.com
 38,pending,INS-101,Fri Dec 20 2024 00:00:00 GMT+0800 (Taipei Standard Time),16:05:00,Howard,01157160,Department of Computer Science and Engineering,09161365698,Meeting,12,2,kent.ma04@gmail.com
+39,pending,MAF-412,Wed Dec 25 2024 00:00:00 GMT+0800 (Taipei Standard Time),11:15:00,Renato,01157122,Department of Computer Science and Engineering,00000000,Gathering,30,27,01157122
+40,pending,INS-101,Tue Dec 31 2024 00:00:00 GMT+0800 (Taipei Standard Time),10:20:00,Alex,01157154,Department of Computer Science and Engineering,0369852147,Playing,20,2,01157154@gmail.com
+41,approved,INS-101,Tue Dec 31 2024 00:00:00 GMT+0800 (Taipei Standard Time),10:20:00,Kent,01157160,Department of Computer Science and Engineering,09161365698,Playing,20,2,kent.ma04@gmail.com
