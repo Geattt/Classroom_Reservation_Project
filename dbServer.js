@@ -53,6 +53,10 @@ const DB_PORT = process.env.DB_PORT
 const port = process.env.PORT
 app.listen(port, ()=> console.log(`Server Started on port ${port}...`))
 
+app.get('/', (req, res) => {
+    res.redirect('/login.html');
+  });
+
 const bcrypt = require("bcryptjs")
 app.use(express.json())
 //middleware to read req.body.<params>
